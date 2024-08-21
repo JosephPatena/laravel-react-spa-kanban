@@ -149,7 +149,7 @@ export default function Index({ auth, users, queryParams = null, success }) {
                         key={user.id}
                       >
                         <td className="px-3 py-2">{user.id}</td>
-                        <th className="px-3 py-2 text-gray-100 text-nowrap">
+                        <th className="px-3 py-2 text-nowrap">
                           {user.name}
                         </th>
                         <td className="px-3 py-2">{user.email}</td>

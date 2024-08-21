@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\KanbanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/', [KanbanController::class, 'index']);
+    Route::get('/{id}', [KanbanController::class, 'show']);
+    Route::post('/create', [KanbanController::class, 'create']);
+    Route::put('/update/{id}', [KanbanController::class, 'update']);
+    Route::put('/update/category/{id}', [KanbanController::class, 'updateCategory']);
+    Route::delete('/delete/{id}', [KanbanController::class, 'delete']);
 });

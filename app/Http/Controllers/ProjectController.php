@@ -43,6 +43,13 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function fetch()
+    {
+        return response()->json([
+            'projects' => ProjectResource::collection(Project::all())
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

@@ -44,6 +44,21 @@ class TaskController extends Controller
         ]);
     }
 
+    public function fetch($project_id)
+    {
+        $query = Task::query();
+        if ($project_id) {
+            $query->where('project_id', $project_id);
+        }
+        $tasks = $query->latest()
+                        ->limit(30)
+                        ->get()
+                        ->reverse();
+        return response()->json([
+            'tasks' => TaskResource::collection($tasks)
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -71,9 +86,9 @@ class TaskController extends Controller
         if ($image) {
             $data['image_path'] = $image->store('task/' . Str::random(), 'public');
         }
-        Task::create($data);
+        $task = Task::create($data);
 
-        return to_route('task.index')
+        return to_route('task.show', $task->id)
             ->with('success', 'Task was created');
     }
 
