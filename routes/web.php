@@ -13,16 +13,16 @@ use Inertia\Inertia;
 Route::redirect('/', '/dashboard');
 Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::resource('project', ProjectController::class);
-Route::get('projects-fetch', [ProjectController::class, 'fetch'])->name('project.fetch');
+Route::post('projects-fetch', [ProjectController::class, 'fetch'])->name('project.fetch');
 Route::post('project-destroy-all', [ProjectController::class, 'destroyAll'])->name('project.destroy_all');
 Route::resource('user', UserController::class);
+Route::post('users-fetch', [UserController::class, 'fetch'])->name('user.fetch');
 Route::resource('task', TaskController::class);
 Route::post('tasks-fetch/{project_id}', [TaskController::class, 'fetch'])->name('task.fetch');
 Route::resource('kanban', KanbanController::class);
-Route::put('update-category/{id}', [KanbanController::class, 'updateCategory'])->name('kanban.category-update');
+Route::post('update-category', [KanbanController::class, 'updateCategory'])->name('kanban.category-update');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('my-tasks', [TaskController::class, 'myTasks'])->name('task.myTasks');
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

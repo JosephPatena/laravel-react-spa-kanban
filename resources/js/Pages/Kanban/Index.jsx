@@ -1,12 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react'
-import AddTaskModal from './AddTaskModal';
-import ShowTaskModal from './ShowTaskModal';
-import TasksContainer from './TasksContainer';
-import { Head, Link, router } from "@inertiajs/react";
+import { TASK_STATUS_TEXT_MAP, PRIORITY_STATUS_TEXT_MAP, PRIORITY_STATUS_BORDER_CLASS_MAP } from "@/constants.jsx";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import SelectInput from '@/Components/SelectInput';
+import React, { useEffect, useState } from 'react';
+import TasksContainer from './TasksContainer';
+import AdvancedSearch from "./AdvancedSearch";
+import ShowTaskModal from './ShowTaskModal';
+import AddTaskModal from './AddTaskModal';
+import { Head } from "@inertiajs/react";
+import { DndProvider } from 'react-dnd';
 import axios from 'axios';
 
 export const ItemTypes = {
@@ -14,28 +15,37 @@ export const ItemTypes = {
 }
 
 function Home({auth}) {
-    const [isOpenModal, setIsOpenModal] = useState(false);
     const [isOpenTaskModal, setIsOpenTaskModal] = useState(false);
+    const [isOpenModal, setIsOpenModal] = useState(false);
+    const [projectId, setprojectId] = useState(0);
+    const [projects, setProjects] = useState([]);
     const [category, setCategory] = useState("");
     const [taskId, setTaskId] = useState(0);
-    const [projectId, setprojectId] = useState(0);
+    const [users, setUsers] = useState([]);
     const [tasks, setTasks] = useState([]);
-    const [projects, setProjects] = useState([]);
 
     const getTasks = async (id) => {
-        setTasks([])
-        axios.post(route('task.fetch', id))
-        .then(response => {
-            setTasks(response.data.tasks)
+        await axios.post(route('task.fetch', id))
+        .then(res => {
+            setTasks(res.data.tasks)
         })
         .catch(error => {
         });
     }
 
     const getProjects = async () => {
-        axios.get(route('project.fetch'))
-        .then(response => {
-            setProjects(response.data.projects)
+        await axios.post(route('project.fetch'))
+        .then(res => {
+            setProjects(res.data.projects)
+        })
+        .catch(error => {
+        });
+    }
+
+    const getUsers = async () => {
+        await axios.post(route('user.fetch'))
+        .then(res => {
+            setUsers(res.data.users)
         })
         .catch(error => {
         });
@@ -57,28 +67,10 @@ function Home({auth}) {
         setTaskId(id)
     }
 
-    const statuses = {
-        todo: {
-            title: 'To Do',
-            color: 'red'
-        },
-        in_progress: {
-            title: 'In Progress',
-            color: 'gray'
-        },
-        testing: {
-            title: 'Testing',
-            color: 'blue'
-        },
-        done: {
-            title: 'Done',
-            color: 'green'
-        }
-    }
-
     useEffect(() => {
         getProjects();
         getTasks(projectId);
+        getUsers();
     }, [])
 
     return (
@@ -86,39 +78,58 @@ function Home({auth}) {
             <AuthenticatedLayout
                 user={auth.user}
                 header={
-                    <div class="w-full flex">
-                        <div class="w-1/2">
-                            <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                                Kanban Board
-                            </h2>
-                        </div>
-                        <div class="w-1/2">
-                            <SelectInput
-                                name="project_id"
-                                id="task_project_id"
-                                className="mt-1 block w-full"
-                                onChange={(e) => handleProjectChange(e.target.value)}
-                                >
-                                <option value="">All Project Tasks</option>
-                                {projects.map((project) => (
-                                    <option value={project.id} key={project.id}>
-                                    {project.name}
-                                    </option>
-                                ))}
-                            </SelectInput>
-                        </div>
-                    </div>
+                    <AdvancedSearch></AdvancedSearch>
                 }
             >
                 <Head title="Kanban Board" />
-                {isOpenModal && <AddTaskModal handleOpenModal={handleOpenModal} category={category} getTasks={getTasks} project_id={projectId} auth={auth} />}
-                {isOpenTaskModal && <ShowTaskModal handleOpenTaskModal={handleOpenTaskModal} category={category} getTasks={getTasks} id={taskId} project_id={projectId} />}
-                <div className='h-full min-h-screen pb-10 pt-10'>
-                    <div className='mt-10 container mx-auto grid grid-cols-1 md:grid-cols-4 gap-5 px-2 md:px-0'>
-                        <TasksContainer getTasks={getTasks} tasks={tasks} status={statuses.todo} category={'pending'} handleOpenModal={handleOpenModal} handleOpenTaskModal={handleOpenTaskModal} />
-                        <TasksContainer getTasks={getTasks} tasks={tasks} status={statuses.in_progress} category={'in_progress'} handleOpenModal={handleOpenModal} handleOpenTaskModal={handleOpenTaskModal} />
-                        <TasksContainer getTasks={getTasks} tasks={tasks} status={statuses.testing} category={'testing'} handleOpenModal={handleOpenModal} handleOpenTaskModal={handleOpenTaskModal} />
-                        <TasksContainer getTasks={getTasks} tasks={tasks} status={statuses.done} category={'completed'} handleOpenModal={handleOpenModal} handleOpenTaskModal={handleOpenTaskModal} />
+                <div className="py-12 pt-5">
+                    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        {
+                            isOpenModal &&
+                            <AddTaskModal
+                                handleOpenModal={handleOpenModal}
+                                project_id={projectId}
+                                category={category}
+                                getTasks={getTasks}
+                                auth={auth}
+                            />
+                        }
+                        {
+                            isOpenTaskModal && 
+                            <ShowTaskModal
+                                handleOpenTaskModal={handleOpenTaskModal}
+                                project_id={projectId}
+                                category={category}
+                                getTasks={getTasks}
+                                users={users}
+                                id={taskId}
+                            />
+                        }
+                        {
+                            Object.entries(PRIORITY_STATUS_TEXT_MAP).map(([priority, index], key) => {
+                                return (
+                                    <div key={key} className='h-full min-h-screen pb-5 pt-5'>
+                                        <p className={`mx-auto container p-4 bg-white font-bold rounded-lg border border-l-4 ${PRIORITY_STATUS_BORDER_CLASS_MAP[priority]}`}>
+                                            {index}
+                                        </p>
+                                        <div className='mt-5 container mx-auto grid grid-cols-1 md:grid-cols-4 gap-5 px-2 md:px-0'>
+                                            {Object.entries(TASK_STATUS_TEXT_MAP).map(([status]) => (
+                                                <TasksContainer
+                                                    key={status} // Assuming `status` is unique; if not, you can use a combination of `status` and `priority` or another unique identifier
+                                                    getTasks={getTasks}
+                                                    tasks={tasks}
+                                                    category={status}
+                                                    priority={priority}
+                                                    handleOpenModal={handleOpenModal}
+                                                    handleOpenTaskModal={handleOpenTaskModal}
+                                                    project_id={projectId}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        }       
                     </div>
                 </div>
             </AuthenticatedLayout>

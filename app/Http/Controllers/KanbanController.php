@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Requests\StoreTaskRequest;
 use App\Http\Resources\TaskResource;
-use App\Models\Task;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use App\Models\Task;
+use App\Models\User;
 
 class KanbanController extends Controller
 {
@@ -32,9 +34,15 @@ class KanbanController extends Controller
         
     }
 
-    public function updateCategory(Request $request, $id)
+    public function updateCategory(Request $request)
     {
-        
+        $task = Task::find($request->id);
+        $task->priority = $request->priority;
+        $task->status = $request->category;
+        $task->save();
+        return response()->json([
+            'message' => 'Successfully update!'
+        ]);
     }
 
     public function destroy(Task $task)

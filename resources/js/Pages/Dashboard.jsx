@@ -1,7 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { TASK_STATUS_CLASS_MAP, TASK_STATUS_TEXT_MAP } from "@/constants";
-import { Head, Link } from "@inertiajs/react";
-import TasksTable from "@/Pages/Task/TasksTable";
+import { Head } from "@inertiajs/react";
 
 export default function Dashboard({
   auth,
@@ -9,9 +7,6 @@ export default function Dashboard({
   totalPendingTasks,
   totalProgressTasks,
   totalCompletedTasks,
-  tasks,
-  queryParams,
-  success,
 }) {
   return (
     <AuthenticatedLayout
@@ -23,60 +18,39 @@ export default function Dashboard({
       }
     >
       <Head title="Dashboard" />
-
       <div className="py-12">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-4 gap-2">
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-            <div className="p-6 text-gray-900 dark:text-gray-100">
-              <h3 className="text-dark-500 text-2xl font-semibold">
-                All Tasks
-              </h3>
-              <p className="text-xl mt-4">
-                <span className="ml-2">{allTasks}</span>
-              </p>
+        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Side - All Tasks */}
+            <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+              <h2 className="text-2xl font-semibold text-gray-700 mb-4">All Tasks</h2>
+              <p className="text-5xl font-bold text-gray-900">{allTasks}</p>
             </div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-            <div className="p-6 text-gray-900 dark:text-gray-100">
-              <h3 className="text-amber-500 text-2xl font-semibold">
-                Pending Tasks
-              </h3>
-              <p className="text-xl mt-4">
-                <span className="ml-2">{totalPendingTasks}</span>
-              </p>
-            </div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-            <div className="p-6 text-gray-900 dark:text-gray-100">
-              <h3 className="text-blue-500 text-2xl font-semibold">
-                In Progress Tasks
-              </h3>
-              <p className="text-xl mt-4">
-                <span className="ml-2">{totalProgressTasks}</span>
-              </p>
-            </div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-            <div className="p-6 text-gray-900 dark:text-gray-100">
-              <h3 className="text-green-500 text-2xl font-semibold">
-                Completed Tasks
-              </h3>
-              <p className="text-xl mt-4">
-                <span className="ml-2">{totalCompletedTasks}</span>
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="pb-12">
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
-            <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-              <div className="p-6 text-gray-900 dark:text-gray-100">
-                <TasksTable
-                  tasks={tasks}
-                  success={success}
-                  queryParams={queryParams}
-                  hideProjectColumn={true}
-                />
+
+            {/* Right Side - Other Task Statuses */}
+            <div className="grid grid-cols-2 gap-6">
+              {/* Pending */}
+              <div className="bg-yellow-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                <h3 className="text-xl font-semibold text-yellow-700 mb-2">Pending</h3>
+                <p className="text-3xl font-bold text-yellow-800">{totalPendingTasks}</p>
+              </div>
+
+              {/* In Progress */}
+              <div className="bg-blue-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                <h3 className="text-xl font-semibold text-blue-700 mb-2">In Progress</h3>
+                <p className="text-3xl font-bold text-blue-800">{totalProgressTasks}</p>
+              </div>
+
+              {/* Testing */}
+              <div className="bg-indigo-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                <h3 className="text-xl font-semibold text-indigo-700 mb-2">Testing</h3>
+                <p className="text-3xl font-bold text-indigo-800">0</p>
+              </div>
+
+              {/* Completed */}
+              <div className="bg-green-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                <h3 className="text-xl font-semibold text-green-700 mb-2">Completed</h3>
+                <p className="text-3xl font-bold text-green-800">{totalCompletedTasks}</p>
               </div>
             </div>
           </div>

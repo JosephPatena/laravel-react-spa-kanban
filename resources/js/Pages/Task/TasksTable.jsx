@@ -1,8 +1,6 @@
-import Pagination from "@/Components/Pagination";
-import SelectInput from "@/Components/SelectInput";
-import TextInput from "@/Components/TextInput";
-import TableHeading from "@/Components/TableHeading";
 import { TASK_STATUS_CLASS_MAP, TASK_STATUS_TEXT_MAP } from "@/constants.jsx";
+import TableHeading from "@/Components/TableHeading";
+import Pagination from "@/Components/Pagination";
 import { Link, router } from "@inertiajs/react";
 
 export default function TasksTable({
@@ -42,13 +40,6 @@ export default function TasksTable({
     router.get(route("task.index"), queryParams);
   };
 
-  const deleteTask = (task) => {
-    if (!window.confirm("Are you sure you want to delete the task?")) {
-      return;
-    }
-    router.delete(route("task.destroy", task.id));
-  };
-
   return (
     <>
       {success && (
@@ -58,7 +49,7 @@ export default function TasksTable({
       )}
       <div className="overflow-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500">
+          <thead className="text-xs text-gray-700 uppercase dark:text-gray-400 border-b-2 border-gray-500">
             <tr className="text-nowrap">
               <TableHeading
                 name="id"
@@ -68,7 +59,6 @@ export default function TasksTable({
               >
                 ID
               </TableHeading>
-              <th className="px-3 py-3">Image</th>
               {!hideProjectColumn && (
                 <th className="px-3 py-3">Project Name</th>
               )}
@@ -108,39 +98,6 @@ export default function TasksTable({
                 Due Date
               </TableHeading>
               <th className="px-3 py-3">Created By</th>
-              <th className="px-3 py-3 text-right">Actions</th>
-            </tr>
-          </thead>
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-500">
-            <tr className="text-nowrap">
-              <th className="px-3 py-3"></th>
-              <th className="px-3 py-3"></th>
-              {!hideProjectColumn && <th className="px-3 py-3"></th>}
-              <th className="px-3 py-3">
-                <TextInput
-                  className="w-full"
-                  defaultValue={queryParams.name}
-                  placeholder="Task Name"
-                  onBlur={(e) => searchFieldChanged("name", e.target.value)}
-                  onKeyPress={(e) => onKeyPress("name", e)}
-                />
-              </th>
-              <th className="px-3 py-3">
-                <SelectInput
-                  className="w-full"
-                  defaultValue={queryParams.status}
-                  onChange={(e) => searchFieldChanged("status", e.target.value)}
-                >
-                  <option value="">Select Status</option>
-                  <option value="pending">Pending</option>
-                  <option value="in_progress">In Progress</option>
-                  <option value="completed">Completed</option>
-                </SelectInput>
-              </th>
-              <th className="px-3 py-3"></th>
-              <th className="px-3 py-3"></th>
-              <th className="px-3 py-3"></th>
-              <th className="px-3 py-3"></th>
             </tr>
           </thead>
           <tbody>
@@ -150,9 +107,6 @@ export default function TasksTable({
                 key={task.id}
               >
                 <td className="px-3 py-2">{task.id}</td>
-                <td className="px-3 py-2">
-                  <img src={task.image_path} style={{ width: 60 }} />
-                </td>
                 {!hideProjectColumn && (
                   <td className="px-3 py-2">{task.project.name}</td>
                 )}
@@ -172,20 +126,6 @@ export default function TasksTable({
                 <td className="px-3 py-2 text-nowrap">{task.created_at}</td>
                 <td className="px-3 py-2 text-nowrap">{task.due_date}</td>
                 <td className="px-3 py-2">{task.createdBy.name}</td>
-                <td className="px-3 py-2 text-nowrap">
-                  <Link
-                    href={route("task.edit", task.id)}
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-1"
-                  >
-                    Edit
-                  </Link>
-                  <button
-                    onClick={(e) => deleteTask(task)}
-                    className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1"
-                  >
-                    Delete
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>

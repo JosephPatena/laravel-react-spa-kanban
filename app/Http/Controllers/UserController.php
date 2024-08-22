@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserCrudResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -57,6 +58,13 @@ class UserController extends Controller
 
         return to_route('user.index')
             ->with('success', 'User was created');
+    }
+
+    public function fetch()
+    {
+        return response()->json([
+            'users' => UserResource::collection(User::all())
+        ]);
     }
 
     /**
