@@ -1,18 +1,14 @@
-import Pagination from "@/Components/Pagination";
-import SelectInput from "@/Components/SelectInput";
-import TextInput from "@/Components/TextInput";
+import { PROJECT_STATUS_CLASS_MAP, PROJECT_STATUS_TEXT_MAP } from "@/constants.jsx";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import {
-  PROJECT_STATUS_CLASS_MAP,
-  PROJECT_STATUS_TEXT_MAP,
-} from "@/constants.jsx";
 import { Head, Link, router } from "@inertiajs/react";
 import TableHeading from "@/Components/TableHeading";
+import SelectInput from "@/Components/SelectInput";
+import Pagination from "@/Components/Pagination";
+import TextInput from "@/Components/TextInput";
 import Checkbox from "@/Components/Checkbox";
-import { useState, useEffect } from "react";
-import Modal from "@/Components/Modal";
+import { useState } from "react";
 
-export default function Index({ auth, projects, copies, queryParams = null, success }) {
+export default function Index({ auth, projects, queryParams = null, success }) {
   queryParams = queryParams || {};
   const searchFieldChanged = (name, value) => {
     if (value) {
@@ -42,13 +38,6 @@ export default function Index({ auth, projects, copies, queryParams = null, succ
       queryParams.sort_direction = "asc";
     }
     router.get(route("project.index"), queryParams);
-  };
-
-  const deleteProject = (project) => {
-    if (!window.confirm("Are you sure you want to delete the project?")) {
-      return;
-    }
-    router.delete(route("project.destroy", project.id));
   };
 
 
@@ -88,74 +77,6 @@ export default function Index({ auth, projects, copies, queryParams = null, succ
 
     setCheckedItems(newCheckedItems);
   };
-
-  const deleteAll = () => {
-    var hasCheckedNone = true
-    checkedItems.forEach(item => {
-      if (item[item.id]) {
-        hasCheckedNone = false;
-      }
-    });
-
-    if (hasCheckedNone) {
-      return alert('Please select item before proceeding');
-    }
-
-    if (!window.confirm("Are you sure you want to delete the selected the project/s?")) {
-      return;
-    }
-
-    router.post(route('project.destroy_all', checkedItems));
-  };
-
-  const [forEdit, setForEditProject] = useState({});
-  const [isModalShow, hideAndShowModal] = useState(false);
-
-  const editProject = (project) => {
-    var newProj = project
-    hideAndShowModal(true);
-    setForEditProject(newProj);
-  };
-
-  const pushUpdate = (column, update) => {
-    forEdit[column] = update;
-    setForEditProject(forEdit);
-  };
-
-  const saveProject = (event) => {
-    event.preventDefault();
-    router.put(route('project.update', forEdit.id), forEdit);
-    hideAndShowModal(false);
-  };
-
-  const [inputValue, setInputValue] = useState('');
-  const [typingTimeout, setTypingTimeout] = useState(null);
-
-  const handleChange = (event) => {
-    const column = event.target.name;
-    const value = event.target.value;
-    pushUpdate(column, value)
-
-    if (typingTimeout) {
-      clearTimeout(typingTimeout);
-    }
-
-    setTypingTimeout(setTimeout(() => {
-      // Trigger your action here, for example:
-      console.log(`User finished typing. Input value: ${value}`);
-      
-      // Replace the console.log with your action logic
-    }, 1000)); // Adjust the delay (in milliseconds) as needed
-  };
-
-  useEffect(() => {
-    // Clean up timeout on component unmount
-    return () => {
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
-      }
-    };
-  }, [typingTimeout]);
 
   return (
     <AuthenticatedLayout

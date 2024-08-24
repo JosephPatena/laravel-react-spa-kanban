@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use Request;
 
 class TaskController extends Controller
 {
@@ -19,39 +20,40 @@ class TaskController extends Controller
      */
     public function index()
     {
+        return inertia("Task/Index", [
+            'projects' => ProjectResource::collection(Project::all()),
+            'users' => UserResource::collection(User::all())
+        ]);
+    }
+
+    public function fetch()
+    {
         $query = Task::query();
 
         $sortField = request("sort_field", 'created_at');
         $sortDirection = request("sort_direction", "desc");
 
-        if (request("name")) {
-            $query->where("name", "like", "%" . request("name") . "%");
-        }
-        if (request("status")) {
-            $query->where("status", request("status"));
+        if (request('project_ids')) {
+            $query->whereIn('project_id', request('project_ids'));
         }
 
-        $tasks = $query->orderBy($sortField, $sortDirection)
-            ->paginate(10)
-            ->onEachSide(1);
-
-        return inertia("Task/Index", [
-            "tasks" => TaskResource::collection($tasks),
-            'queryParams' => request()->query() ?: null,
-            'success' => session('success'),
-        ]);
-    }
-
-    public function fetch($project_id)
-    {
-        $query = Task::query();
-        if ($project_id) {
-            $query->where('project_id', $project_id);
+        if (request("keyword")) {
+            $query->where("name", "like", "%" . request("keyword") . "%");
         }
-        $tasks = $query->latest()
-                        ->limit(30)
-                        ->get()
-                        ->reverse();
+
+        if (request('from_task_page')) {
+            $tasks = $query->orderBy($sortField, $sortDirection)
+                            ->paginate(request('show'))
+                            ->onEachSide(1);
+        }
+        else {
+            $tasks = $query->latest()
+                            ->limit(request('show'))
+                            ->get()
+                            ->reverse();
+        }
+
+
         return response()->json([
             'tasks' => TaskResource::collection($tasks)
         ]);
@@ -92,22 +94,8 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         return inertia('Task/Show', [
-            'id' => $task->id,
-        ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
-    {
-        $projects = Project::query()->orderBy('name', 'asc')->get();
-        $users = User::query()->orderBy('name', 'asc')->get();
-
-        return inertia("Task/Edit", [
-            'task' => new TaskResource($task),
-            'projects' => ProjectResource::collection($projects),
-            'users' => UserResource::collection($users),
+            'task' => TaskResource::make($task),
+            'users' => UserResource::collection(User::all())
         ]);
     }
 

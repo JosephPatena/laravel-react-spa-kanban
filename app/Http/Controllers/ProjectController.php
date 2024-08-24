@@ -34,10 +34,8 @@ class ProjectController extends Controller
             ->paginate(10)
             ->onEachSide(1);
 
-        $data = ProjectResource::collection($projects);
         return inertia("Project/Index", [
-            "projects" => $data,
-            "copies" => $data,
+            "projects" => ProjectResource::collection($projects),
             'queryParams' => request()->query() ?: null,
             'success' => session('success'),
         ]);

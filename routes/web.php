@@ -18,9 +18,9 @@ Route::post('project-destroy-all', [ProjectController::class, 'destroyAll'])->na
 Route::resource('user', UserController::class);
 Route::post('users-fetch', [UserController::class, 'fetch'])->name('user.fetch');
 Route::resource('task', TaskController::class);
-Route::post('tasks-fetch/{project_id}', [TaskController::class, 'fetch'])->name('task.fetch');
+Route::post('tasks-fetch', [TaskController::class, 'fetch'])->name('task.fetch');
 Route::resource('kanban', KanbanController::class);
-Route::post('update-category', [KanbanController::class, 'updateCategory'])->name('kanban.category-update');
+Route::post('update-status', [KanbanController::class, 'updateStatus'])->name('kanban.status-update');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');

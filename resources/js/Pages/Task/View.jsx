@@ -1,44 +1,21 @@
-import { router, Link } from '@inertiajs/react';
-import React, { useState } from 'react';
-import toast from 'react-hot-toast';
+import { Link } from '@inertiajs/react';
+import { useState } from 'react';
 
-
-function TaskView({ id, users }) {
-    const [task, setTask] = useState({
-        id: id,
+function TaskView({ task, users, getTasks }) {
+    const [taskData, setTaskData] = useState({
+        id: 0,
         name: "",
         description: "",
-        category: "",
-        index: 0,
+        status: "",
     });
 
     const handleChange = (e) => {
-        setTask((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-    }
-
-    const fetchTask = async (id) => {
-        try {
-            axios.get(route('kanban.show', id))
-            .then(res => {
-                setTask((prev) => {
-                    return { ...prev, ...res.data.task }
-                })
-            })
-            .catch(err => {
-
-            })
-        } catch (error) {
-            console.log(error);
-        }
+        setTaskData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
     const handleSave = async () => {
         
     }
-
-    useState(() => {
-        fetchTask(id)
-    }, [])
 
     return (
         <>
@@ -227,7 +204,7 @@ function TaskView({ id, users }) {
                             <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-500 text-white font-bold">
                                 JS
                             </div>
-                            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-1 bg-black text-white text-xs rounded-md p-1 z-10">
+                            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-1 bg-black text-white text-xs rounded-md p-1 z-10 w-max whitespace-nowrap">
                                 John Smith
                             </div>
                         </div>
@@ -235,7 +212,7 @@ function TaskView({ id, users }) {
                             <div className="flex items-center justify-center h-8 w-8 rounded-full bg-green-500 text-white font-bold">
                                 AD
                             </div>
-                            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-1 bg-black text-white text-xs rounded-md p-1 z-10">
+                            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 mt-1 bg-black text-white text-xs rounded-md p-1 z-10 w-max whitespace-nowrap">
                                 Alice Doe
                             </div>
                         </div>

@@ -1,17 +1,53 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import AdvancedSearch from "./AdvancedSearch";
 import { Head, Link } from "@inertiajs/react";
-import AdvancedSearch from "@/Pages/Kanban/AdvancedSearch";
+import { useState, useEffect } from "react";
 import TasksTable from "./TasksTable";
 
-export default function Index({ auth, success, tasks, queryParams = null }) {
+export default function Index({ auth, projects, users}) {
+  const [tasks, setTasks] = useState([]);
+  const [queries, setQuery] = useState({
+      show: 25,
+      project_ids: [],
+      from_task_page: true
+  });
+
+  const getTasks = async (query) => {
+      await axios.post(route('task.fetch'), query ? query : queries)
+      .then(res => {
+          setTasks(res.data.tasks)
+      })
+      .catch(error => {
+      });
+  }
+
+  useEffect(() => {
+    getTasks();
+  }, [])
+
   return (
     <AuthenticatedLayout
       user={auth.user}
       header={
-        <AdvancedSearch
-          queryParams={queryParams}
-           
-        ></AdvancedSearch>
+        <>
+          <div className="flex items-center space-x-4">
+          <div className="flex-grow">
+            <AdvancedSearch
+              from_task_page={true}
+              getTasks={getTasks}
+              projects={projects}
+              users={users}
+              className='w-full'
+            />
+          </div>
+            <Link
+              href={route("task.create")}
+              className="p-2 rounded-md bg-green-600 border border-green-700 text-white font-semibold hover:bg-green-700 transition duration-150 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+            >
+              Add New
+            </Link>
+          </div>
+        </>
       }
     >
       <Head title="Tasks" />
@@ -22,8 +58,8 @@ export default function Index({ auth, success, tasks, queryParams = null }) {
             <div className="p-6 text-gray-900 dark:text-gray-100">
               <TasksTable
                 tasks={tasks}
-                queryParams={queryParams}
-                success={success}
+                queryParams={[]}
+                success={null}
               />
             </div>
           </div>

@@ -1,16 +1,31 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
-import React, { useState } from 'react';
-import View from '@/Pages/Task/View';
-export default function Show({ auth, id }) {
-  const [users, setUsers] = useState([]);
+import ViewTask from './View';
+
+export default function Show({ auth, task, users }) {
   return (
     <AuthenticatedLayout
       user={auth.user}
+      header={
+        <>
+          <Link
+            href={route("task.index")}
+            className="bg-gray-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-gray-600 float-right"
+          >
+            Back
+          </Link>
+          <div className="flex justify-between items-center">
+            <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+              Create New Task
+            </h2>
+          </div>
+        </>
+      }
     >
+      <Head title="View Task" />
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <View id={id} users={users}></View>
+          <ViewTask task={task} users={users}></ViewTask>
         </div>
       </div>
     </AuthenticatedLayout>

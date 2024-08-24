@@ -101,7 +101,7 @@ export default function TasksTable({
             </tr>
           </thead>
           <tbody>
-            {tasks.data.map((task) => (
+            {tasks.map((task) => (
               <tr
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                 key={task.id}
@@ -131,7 +131,10 @@ export default function TasksTable({
           </tbody>
         </table>
       </div>
-      <Pagination links={tasks.meta.links} />
+      {
+        tasks.meta &&
+        <Pagination links={tasks.meta.links} />
+      }
     </>
   );
 }

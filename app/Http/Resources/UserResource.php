@@ -18,7 +18,8 @@ class UserResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
-            "email" => $this->email
+            "email" => $this->email,
+            "initials" => substr(implode('', array_map(fn($word) => strtoupper($word[0]), explode(' ', $this->name))), 0, 3),
         ];
     }
 }
