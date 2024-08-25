@@ -28,10 +28,10 @@ function Home({auth, projects, users}) {
         from_task_page: false
     });
 
-    const getTasks = async (query) => {
-        await axios.post(route('task.fetch'), query ? query : queries)
+    const getTasks = async () => {
+        await axios.post(route('task.fetch'), queries)
         .then(res => {
-            setTasks(res.data.tasks)
+            setTasks(res.data.data)
         })
         .catch(error => {
         });
@@ -58,9 +58,9 @@ function Home({auth, projects, users}) {
                 user={auth.user}
                 header={
                     <AdvancedSearch
-                        from_task_page={false}
                         getTasks={getTasks}
                         projects={projects}
+                        setQuery={setQuery}
                         users={users}
                     />
                 }
@@ -74,6 +74,7 @@ function Home({auth, projects, users}) {
                                 handleOpenModal={handleOpenModal}
                                 getTasks={getTasks}
                                 priority={priority}
+                                projects={projects}
                                 status={status}
                                 users={users}
                             />

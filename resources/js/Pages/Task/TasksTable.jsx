@@ -1,13 +1,14 @@
 import { TASK_STATUS_CLASS_MAP, TASK_STATUS_TEXT_MAP } from "@/constants.jsx";
 import TableHeading from "@/Components/TableHeading";
-import Pagination from "@/Components/Pagination";
 import { Link, router } from "@inertiajs/react";
 
 export default function TasksTable({
   tasks,
+  links,
   success,
   queryParams = null,
   hideProjectColumn = false,
+  setActiveLink
 }) {
   queryParams = queryParams || {};
   const searchFieldChanged = (name, value) => {
@@ -131,10 +132,27 @@ export default function TasksTable({
           </tbody>
         </table>
       </div>
+      <nav className="text-center mt-4">
       {
-        tasks.meta &&
-        <Pagination links={tasks.meta.links} />
+        links.map((link) => (
+          <button
+            onClick={(e) => {
+              setActiveLink(link.url)
+            }}
+            preserveScroll
+            key={link.label}
+            className={
+              "inline-block py-2 px-3 rounded-lg text-dark-200 text-xs ml-1" +
+              (link.active ? "bg-gray-950 " : " ") +
+              (!link.url
+                ? "!text-gray-500 cursor-not-allowed "
+                : "hover:bg-gray-200")
+            }
+            dangerouslySetInnerHTML={{ __html: link.label }}
+          ></button>
+        ))
       }
+      </nav>
     </>
   );
 }

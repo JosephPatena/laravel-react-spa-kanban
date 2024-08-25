@@ -12,11 +12,12 @@ class Task extends Model
     protected $fillable = [
         'name',
         'description',
-        'image_path',
         'status',
         'priority',
         'due_date',
         'assigned_user_id',
+        'reviewer_user_id',
+        'tester_user_id',
         'created_by',
         'updated_by',
         'project_id',
@@ -30,6 +31,16 @@ class Task extends Model
     public function assignedUser()
     {
         return $this->belongsTo(User::class, 'assigned_user_id');
+    }
+
+    public function tester()
+    {
+        return $this->belongsTo(User::class, 'tester_user_id');
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewer_user_id');
     }
 
     public function createdBy()

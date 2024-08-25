@@ -5,17 +5,21 @@ import { useState, useEffect } from "react";
 import TasksTable from "./TasksTable";
 
 export default function Index({ auth, projects, users}) {
+  const [activeLink, setActiveLink] = useState(route('task.fetch'));
   const [tasks, setTasks] = useState([]);
+  const [links, setLinks] = useState([]);
+
   const [queries, setQuery] = useState({
       show: 25,
       project_ids: [],
       from_task_page: true
   });
 
-  const getTasks = async (query) => {
-      await axios.post(route('task.fetch'), query ? query : queries)
+  const getTasks = async () => {
+      await axios.post(activeLink, queries)
       .then(res => {
-          setTasks(res.data.tasks)
+          setTasks(res.data.data)
+          setLinks(res.data.meta.links)
       })
       .catch(error => {
       });
@@ -23,7 +27,7 @@ export default function Index({ auth, projects, users}) {
 
   useEffect(() => {
     getTasks();
-  }, [])
+  }, [activeLink])
 
   return (
     <AuthenticatedLayout
@@ -33,9 +37,9 @@ export default function Index({ auth, projects, users}) {
           <div className="flex items-center space-x-4">
           <div className="flex-grow">
             <AdvancedSearch
-              from_task_page={true}
               getTasks={getTasks}
               projects={projects}
+              setQuery={setQuery}
               users={users}
               className='w-full'
             />
@@ -58,8 +62,10 @@ export default function Index({ auth, projects, users}) {
             <div className="p-6 text-gray-900 dark:text-gray-100">
               <TasksTable
                 tasks={tasks}
-                queryParams={[]}
+                links={links}
                 success={null}
+                queryParams={[]}
+                setActiveLink={setActiveLink}
               />
             </div>
           </div>

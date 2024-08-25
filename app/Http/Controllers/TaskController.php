@@ -53,10 +53,7 @@ class TaskController extends Controller
                             ->reverse();
         }
 
-
-        return response()->json([
-            'tasks' => TaskResource::collection($tasks)
-        ]);
+        return TaskResource::collection($tasks);
     }
 
     /**
@@ -79,13 +76,11 @@ class TaskController extends Controller
     public function store(StoreTaskRequest $request)
     {
         $data = $request->validated();
-        $image = $data['image'] ?? null;
-        $data['created_by'] = Auth::id();
-        $data['updated_by'] = Auth::id();
         $task = Task::create($data);
 
-        return to_route('task.show', $task->id)
-            ->with('success', 'Task was created');
+        return response()->json([
+            'task' => $task
+        ]);
     }
 
     /**

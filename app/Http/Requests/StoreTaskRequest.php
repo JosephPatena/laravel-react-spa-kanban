@@ -24,11 +24,12 @@ class StoreTaskRequest extends FormRequest
     {
         return [
             "name" => ['required', 'max:255'],
-            'image' => ['nullable', 'image'],
             "description" => ['nullable', 'string'],
             'due_date' => ['nullable', 'date'],
             'project_id' => ['required', 'exists:projects,id'],
-            'assigned_user_id' => ['required', 'exists:users,id'],
+            'assigned_user_id' => ['nullable', 'exists:users,id'],
+            'tester_user_id' => ['nullable', 'exists:users,id'],
+            'reviewer_user_id' => ['nullable', 'exists:users,id'],
             'status' => [
                 'required',
                 Rule::in(['pending', 'in_progress', 'testing', 'completed'])

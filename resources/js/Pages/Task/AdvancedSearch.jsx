@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Select from 'react-select';
 
-function AdvancedSearch({getTasks, projects, users, from_task_page}) {
+function AdvancedSearch({getTasks, projects, users, setQuery}) {
     const [selectedAssignees, setSelectedAssignees] = useState([]);
     const [selectedReviewers, setSelectedReviewers] = useState([]);
     const [selectedTesters, setSelectedTesters] = useState([]);
@@ -32,12 +32,6 @@ function AdvancedSearch({getTasks, projects, users, from_task_page}) {
         );
     };
 
-    const [queries, setQuery] = useState({
-        show: 25,
-        project_ids: [],
-        from_task_page: from_task_page
-    });
-
     const handleQuery = (query) => {
         setQuery((prev) => {
             return { ...prev, ...query }
@@ -53,7 +47,7 @@ function AdvancedSearch({getTasks, projects, users, from_task_page}) {
     }
 
     const handleSearch = () => {
-        getTasks(queries)
+        getTasks()
     }
 
     useEffect(() => {
@@ -140,7 +134,7 @@ function AdvancedSearch({getTasks, projects, users, from_task_page}) {
 
                     {/* Filter by Start Date */}
                     <div className='flex-1'>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">Start Date (Inclusive)</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-1">Date Started (Inclusive)</label>
                         <input
                         type="date"
                         className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
@@ -149,7 +143,7 @@ function AdvancedSearch({getTasks, projects, users, from_task_page}) {
 
                     {/* Filter by Date Finish */}
                     <div className='flex-1'>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">Date Finish (Inclusive)</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-1">Date Completed (Inclusive)</label>
                         <input
                         type="date"
                         className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
@@ -192,7 +186,7 @@ function AdvancedSearch({getTasks, projects, users, from_task_page}) {
                         <label className="block text-gray-700 text-sm font-medium mb-1">Show</label>
                         <select
                             onChange={(e) => {
-                                setQuery({show:e.target.value})
+                                handleQuery({show:e.target.value})
                             }}
                             defaultValue={25}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"

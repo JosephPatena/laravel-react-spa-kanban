@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-function AddTaskModal({ projects, getTasks, users, status, priority }) {
+function AddTaskModal({ projects, getTasks, handleOpenModal, users, status, priority }) {
     const [task, setTask] = useState({
         name: "",
         description: "",
-        priority : "",
-        status: "",
-        assigned_user_id : 0
+        status: status,
+        priority: priority,
+        due_date: "",
+        assigned_user_id: 0,
+        tester_user_id: 0,
+        reviewer_user_id: 0,
+        
     })
 
     const handleChange = (e) => {
@@ -28,7 +32,21 @@ function AddTaskModal({ projects, getTasks, users, status, priority }) {
         try {
             axios.post(route('kanban.store'), task)
             .then(res => {
-                console.log(res);
+                console.log(res)
+                // if (res.status !== 200) {
+                //     setNotification({
+                //         isShow: true,
+                //         type: typeClasses.error,
+                //         message: res.message
+                //     })
+                // } else {
+                //     if (getTasks) {
+                //         getTasks()
+                //         handleOpenModal()
+                //     } else {
+                //         Inertia.visit(route('task.show', res.data.task.id));
+                //     }
+                // }
             })
             .catch(err => {
                 setNotification({
@@ -46,11 +64,11 @@ function AddTaskModal({ projects, getTasks, users, status, priority }) {
             <div className="m-5">
                 {
                     notification.isShow &&
-                    <div className={`py-2 mb-4 px-4 text-white rounded mb-41 `+ notification.type}>{notification.message}</div>
+                    <div className={`py-2 mb-4 px-4 rounded mb-41 `+ notification.type}>{notification.message}</div>
                 }
                 <h2 className="text-xl font-semibold mb-4">New Task</h2>
                 <div className="space-y-4">
-                    <div className="flex-1">
+                    <div>
                         <label className="block text-gray-700 font-medium mb-1">
                             Project
                         </label>
@@ -59,13 +77,15 @@ function AddTaskModal({ projects, getTasks, users, status, priority }) {
                             name="project_id"
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                            <option value="pending">Pending</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="testing">Testing</option>
-                            <option value="completed">Completed</option>
+                            <option value=''>Select Project</option>
+                            {
+                                projects.data.map((project) => (
+                                    <option value={project.id}>{project.name}</option>
+                                ))
+                            }
                         </select>
                     </div>
-                    <div className='flex-1'>
+                    <div>
                         <label className="block text-gray-700 font-medium mb-1">
                             Title
                         </label>
@@ -87,77 +107,16 @@ function AddTaskModal({ projects, getTasks, users, status, priority }) {
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
-                    <div className="flex gap-4">
-                        <div className="flex-1">
-                            <label className="block text-gray-700 font-medium mb-1">
-                                Start Date
-                            </label>
-                            <input
-                                onChange={handleChange}
-                                type="date"
-                                name="start_date"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div className="flex-1">
-                            <label className="block text-gray-700 font-medium mb-1">
-                                Due Date
-                            </label>
-                            <input
-                                onChange={handleChange}
-                                type="date"
-                                name="due_date"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                    </div>
-                    <div className="flex gap-4">
-                        <div className="flex-1">
-                            <label htmlFor="Assignee" className="block text-gray-700 font-medium mb-1">
-                                Assignee
-                            </label>
-                            <select
-                                onChange={handleChange}
-                                id="Assignee"
-                                name="status"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="pending">Pending</option>
-                                <option value="in_progress">In Progress</option>
-                                <option value="testing">Testing</option>
-                                <option value="completed">Completed</option>
-                            </select>
-                        </div>
-                        <div className="flex-1">
-                            <label htmlFor="Tester" className="block text-gray-700 font-medium mb-1">
-                                Tester
-                            </label>
-                            <select
-                                onChange={handleChange}
-                                id="Tester"
-                                name="priority"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                            </select>
-                        </div>
-                        <div className="flex-1">
-                            <label htmlFor="Reviewer" className="block text-gray-700 font-medium mb-1">
-                                Reviewer
-                            </label>
-                            <select
-                                onChange={handleChange}
-                                id="Reviewer"
-                                name="priority"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                            </select>
-                        </div>
+                    <div>
+                        <label className="block text-gray-700 font-medium mb-1">
+                            Due Date
+                        </label>
+                        <input
+                            onChange={handleChange}
+                            type="date"
+                            name="due_date"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
                     </div>
                     <div className="flex gap-4">
                         <div className="flex-1">
@@ -192,6 +151,60 @@ function AddTaskModal({ projects, getTasks, users, status, priority }) {
                             </select>
                         </div>
                     </div>
+                    <div className="flex gap-4">
+                        <div className="flex-1">
+                            <label className="block text-gray-700 font-medium mb-1">
+                                Assignee
+                            </label>
+                            <select
+                                onChange={handleChange}
+                                name="assigned_user_id"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value=''>Select Assignee</option>
+                                {
+                                    users.data.map((user) => (
+                                        <option value={user.id}>{user.name}</option>
+                                    ))
+                                }
+                            </select>
+                        </div>
+                        <div className="flex-1">
+                            <label className="block text-gray-700 font-medium mb-1">
+                                Tester
+                            </label>
+                            <select
+                                onChange={handleChange}
+                                name="tester_user_id"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value=''>Select Tester</option>
+                                {
+                                    users.data.map((user) => (
+                                        <option value={user.id}>{user.name}</option>
+                                    ))
+                                }
+                            </select>
+                        </div>
+                        <div className="flex-1">
+                            <label className="block text-gray-700 font-medium mb-1">
+                                Reviewer
+                            </label>
+                            <select
+                                onChange={handleChange}
+                                name="reviewer_user_id"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value=''>Select Reviewer</option>
+                                {
+                                    users.data.map((user) => (
+                                        <option value={user.id}>{user.name}</option>
+                                    ))
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    
                 </div>
                 <div className="flex gap-2 mt-6">
                     <button
