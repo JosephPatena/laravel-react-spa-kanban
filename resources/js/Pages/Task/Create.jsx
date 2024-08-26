@@ -27,6 +27,7 @@ export default function Create({ auth, projects, users }) {
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white p-4 rounded-lg">
           <AddTask
+            from_task_page={true}
             projects={projects}
             users={users}
           ></AddTask>

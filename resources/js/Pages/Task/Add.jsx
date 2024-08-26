@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-function AddTaskModal({ projects, getTasks, handleOpenModal, users, status, priority }) {
+function AddTaskModal({ projects, getTasks, handleOpenModal, users, status, priority, from_task_page }) {
     const [task, setTask] = useState({
+        from_task_page: from_task_page,
         name: "",
         description: "",
         status: status,
@@ -11,16 +12,13 @@ function AddTaskModal({ projects, getTasks, handleOpenModal, users, status, prio
         assigned_user_id: 0,
         tester_user_id: 0,
         reviewer_user_id: 0,
-        
     })
 
     const handleChange = (e) => {
         setTask((prev) => { return { ...prev, [e.target.name]: e.target.value } })
     }
 
-    const [notification, setNotification] = useState({
-        isShow: false
-    });
+    const [notifications, setNotifications] = useState([]);
 
     const typeClasses = {
         success: 'bg-green-100 border-green-400 text-green-700',
@@ -49,11 +47,7 @@ function AddTaskModal({ projects, getTasks, handleOpenModal, users, status, prio
                 // }
             })
             .catch(err => {
-                setNotification({
-                    isShow: true,
-                    type: typeClasses.error,
-                    message: err.message
-                })
+                setNotifications(err.response.data.errors)
             })
         } catch (error) {
         }
@@ -63,8 +57,9 @@ function AddTaskModal({ projects, getTasks, handleOpenModal, users, status, prio
         <>
             <div className="m-5">
                 {
-                    notification.isShow &&
-                    <div className={`py-2 mb-4 px-4 rounded mb-41 `+ notification.type}>{notification.message}</div>
+                    notifications.length && notifications.map((notification) => {
+                        // return <div className={`py-2 mb-4 px-4 rounded mb-41 `+ typeClasses.error}>{notification}</div>
+                    })
                 }
                 <h2 className="text-xl font-semibold mb-4">New Task</h2>
                 <div className="space-y-4">

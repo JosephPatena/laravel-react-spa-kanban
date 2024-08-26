@@ -78,6 +78,10 @@ class TaskController extends Controller
         $data = $request->validated();
         $task = Task::create($data);
 
+        if (request('from_task_page')) {
+            return redirect()->route('task.show', $task->id);
+        }
+
         return response()->json([
             'task' => $task
         ]);

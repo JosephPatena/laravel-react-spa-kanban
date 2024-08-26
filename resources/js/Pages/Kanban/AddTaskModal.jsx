@@ -7,6 +7,7 @@ function AddTaskModal({ handleOpenModal, projects, getTasks, users, status, prio
             <ModalLayout handleOpenModal={handleOpenModal}>
                 <AddTask 
                     handleOpenModal={handleOpenModal}
+                    from_task_page={false}
                     projects={projects}
                     getTasks={getTasks}
                     priority={priority}
