@@ -41,9 +41,43 @@ This project is a Kanban board application built with the following technologies
 
 ## Screenshot
 
-Below is a screenshot of the Kanban board application:
+Below are some screenshots of the Kanban board application:
 
-![Kanban Board Screenshot](assets/kanban-board.png)
+![Kanban Board](assets/kanban-board.png)
+*Main Kanban board view, displaying tasks organized by columns.*
+
+![Advanced Search](assets/advanced-search.png)
+*Advanced search feature for filtering tasks and projects based on various criteria.*
+
+![View Task in Kanban](assets/view-task-kanban.png)
+*Detailed view of a task within the Kanban board, showing task details and comments.*
+
+![Add New Task in Kanban](assets/add-new-task-kanban.png)
+*Interface for adding a new task directly within the Kanban board view.*
+
+![Projects Index](assets/projects-index.png)
+*List of all projects, providing an overview and quick access to individual projects.*
+
+![View Project](assets/view-project.png)
+*Detailed view of a single project, including tasks and project-specific information.*
+
+![Edit Project](assets/edit-project.png)
+*Interface for editing project details, such as name, description, and settings.*
+
+![Task Index](assets/task-index.png)
+*List of all tasks, including options to filter and manage tasks.*
+
+![View Task](assets/view-task.png)
+*Detailed view of a task, including full description, due dates, and assigned users.*
+
+![Add New Task Form](assets/add-new-task.png)
+*Form for creating a new task with relevant details.*
+
+![Dashboard](assets/dashboard.png)
+*Overview of the main dashboard, showing a summary of projects and tasks.*
+
+![User Management](assets/users-index.png)
+*User management interface, displaying all users and their roles.*
 
 ## Installation
 
@@ -68,10 +102,10 @@ To get started with the project, follow these steps:
 5. Generate an application key:
     ```bash
     php artisan key:generate
-    
-6. Run the database migrations:
+
+6. Run the database migrations and seeder:
     ```bash
-    php artisan migrate
+    php artisan migrate --seed
 
 7. Start the development server:
     ```bash
