@@ -289,7 +289,7 @@ function TaskView({ task, users, getTasks }) {
 
                     <div className="mb-4">
                         {/* Start Date */}
-                        <p className="text-sm font-semibold text-gray-600 mb-1">Start Date:</p>
+                        <p className="text-sm font-semibold text-gray-600 mb-1">Date Started:</p>
                         <input
                             type="date"
                             className="text-base text-gray-800 bg-white p-2 rounded-md shadow-sm w-full focus:ring-2 focus:ring-blue-500 border-0"
@@ -298,6 +298,21 @@ function TaskView({ task, users, getTasks }) {
                             defaultValue={task.start_date}
                         />
                     </div>
+                    
+                    {
+                        task.complete_date &&
+                        <div className="mb-4">
+                            {/* Start Date */}
+                            <p className="text-sm font-semibold text-gray-600 mb-1">Date Completed:</p>
+                            <input
+                                readOnly
+                                type="date"
+                                className="text-base text-gray-800 bg-white p-2 rounded-md shadow-sm w-full focus:ring-2 focus:ring-blue-500 border-0"
+                                name="start_date"
+                                defaultValue={task.complete_date}
+                            />
+                        </div>
+                    }
 
                     <div className="mb-4">
                         {/* Assignee */}

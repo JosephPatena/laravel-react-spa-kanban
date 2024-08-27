@@ -16,7 +16,7 @@ export default function Show({ auth, task, users }) {
           </Link>
           <div className="flex justify-between items-center">
             <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-              Create New Task
+              View Task
             </h2>
           </div>
         </>

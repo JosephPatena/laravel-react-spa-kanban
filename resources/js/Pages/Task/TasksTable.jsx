@@ -134,6 +134,7 @@ export default function TasksTable({
       </div>
       <nav className="text-center mt-4">
       {
+        links &&
         links.map((link) => (
           <button
             onClick={(e) => {

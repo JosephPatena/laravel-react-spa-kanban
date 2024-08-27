@@ -39,10 +39,45 @@ This project is a Kanban board application built with the following technologies
 ### 7. Responsive Design
 - **Mobile Friendly**: Fully responsive layout that adapts to different screen sizes, ensuring usability on both desktop and mobile devices.
 
+## Screenshot
+
+Below is a screenshot of the Kanban board application:
+
+![Kanban Board Screenshot](assets/kanban-board.png)
+
 ## Installation
 
 To get started with the project, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
+   git clone https://github.com/JosephPatena/laravel-react-spa-kanban.git
+
+2. Navigate to the project directory:
+    ```bash
+    cd laravel-react-spa-kanban
+
+3. Install the dependencies:
+    ```bash
+    composer install
+    npm install
+
+4. Set up your environment variables:
+   Copy the .env.example file to .env and update the configuration settings accordingly.
+
+5. Generate an application key:
+    ```bash
+    php artisan key:generate
+    
+6. Run the database migrations:
+    ```bash
+    php artisan migrate
+
+7. Start the development server:
+    ```bash
+    npm run dev
+    php artisan serve
+
+8. Access the application in your browser:
+    ```bash
+    http://localhost:8000
