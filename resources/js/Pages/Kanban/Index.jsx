@@ -26,7 +26,11 @@ function Home({auth, projects, users}) {
 
     const [queries, setQuery] = useState({
         show: 25,
-        project_ids: [],
+        testers: [],
+        statuses: [],
+        assignees: [],
+        reviewers: [],
+        priorities: [],
         from_task_page: false
     });
 
@@ -77,6 +81,7 @@ function Home({auth, projects, users}) {
                         getTasks={getTasks}
                         projects={projects}
                         setQuery={setQuery}
+                        queries={queries}
                         users={users}
                     />
                 }

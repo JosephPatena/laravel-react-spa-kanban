@@ -6,6 +6,7 @@ export default function Dashboard({
   allTasks,
   totalPendingTasks,
   totalProgressTasks,
+  totalTestingTasks,
   totalCompletedTasks,
 }) {
   return (
@@ -44,7 +45,7 @@ export default function Dashboard({
               {/* Testing */}
               <div className="bg-indigo-50 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
                 <h3 className="text-xl font-semibold text-indigo-700 mb-2">Testing</h3>
-                <p className="text-3xl font-bold text-indigo-800">0</p>
+                <p className="text-3xl font-bold text-indigo-800">{totalTestingTasks}</p>
               </div>
 
               {/* Completed */}

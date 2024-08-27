@@ -15,6 +15,8 @@ class Task extends Model
         'status',
         'priority',
         'due_date',
+        'start_date',
+        'complete_date',
         'assigned_user_id',
         'reviewer_user_id',
         'tester_user_id',

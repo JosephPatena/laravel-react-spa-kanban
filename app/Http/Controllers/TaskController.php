@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use Carbon\Carbon;
 use Request;
 
 class TaskController extends Controller
@@ -33,12 +34,47 @@ class TaskController extends Controller
         $sortField = request("sort_field", 'created_at');
         $sortDirection = request("sort_direction", "desc");
 
+        if (request("keyword")) {
+            $query->where("name", "like", "%" . request("keyword") . "%")
+                ->orWhere("description", "like", "%" . request("keyword") . "%");
+        }
+
         if (request('project_ids')) {
             $query->whereIn('project_id', request('project_ids'));
         }
 
-        if (request("keyword")) {
-            $query->where("name", "like", "%" . request("keyword") . "%");
+        if (request('statuses')) {
+            $query->whereIn('status', request('statuses'));
+        }
+
+        if (request('priorities')) {
+            $query->whereIn('priority', request('priorities'));
+        }
+
+        if (request('assignees')) {
+            $query->whereIn('assigned_user_id', request('assignees'));
+        }
+
+        if (request('testers')) {
+            $query->whereIn('tester_user_id', request('testers'));
+        }
+
+        if (request('reviewers')) {
+            $query->whereIn('reviewer_user_id', request('reviewers'));
+        }
+
+        if (request('start_date') || request('complete_date')) {
+            $start = request('start_date') ?? Carbon::minValue();
+            $end = request('complete_date') ?? Carbon::maxValue();
+
+            $query->where(function($query) use ($start, $end) {
+                $query->whereBetween('start_date', [$start, $end])
+                    ->orWhereBetween('complete_date', [$start, $end])
+                    ->orWhere(function($query) use ($start, $end) {
+                        $query->where('start_date', '<=', $start)
+                            ->where('complete_date', '>=', $end);
+                    });
+            });
         }
 
         if (request('from_task_page')) {
@@ -78,9 +114,13 @@ class TaskController extends Controller
         $data = $request->validated();
         $task = Task::create($data);
 
+        if (request('from_task_page')) {
+            return to_route('task.show', $task->id);
+        }
+
         return response()->json([
             'task' => $task
-        ]);
+        ], 200);
     }
 
     /**

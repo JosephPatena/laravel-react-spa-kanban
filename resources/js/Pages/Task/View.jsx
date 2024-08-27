@@ -1,21 +1,43 @@
+import { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
-import { useState } from 'react';
+import axios from 'axios';
 
 function TaskView({ task, users, getTasks }) {
-    const [taskData, setTaskData] = useState({
-        id: 0,
-        name: "",
-        description: "",
-        status: "",
-    });
+    
+    const [typingTimeout, setTypingTimeout] = useState(null);
 
-    const handleChange = (e) => {
-        setTaskData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    const handleSave = (event) => {
+        const column = event.target.name;
+        const value = event.target.value;
+        axios.patch(route('kanban.update', task.id), {
+            column: column,
+            value: value,
+        })
+        .then(res => {
+            if (getTasks) {
+                getTasks()
+            }
+        })
+        .catch(err => {})
     }
-
-    const handleSave = async () => {
-        
-    }
+    
+    const handleChange = (event) => {
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
+        }
+    
+        setTypingTimeout(setTimeout(() => {
+            handleSave(event)
+        }, 1000));
+    };
+    
+    useEffect(() => {
+        return () => {
+            if (typingTimeout) {
+                clearTimeout(typingTimeout);
+            }
+        };
+    }, [typingTimeout]);
 
     return (
         <>
@@ -33,6 +55,8 @@ function TaskView({ task, users, getTasks }) {
                     {/* Title */}
                     <input
                         type="text"
+                        name="name"
+                        onChange={handleChange}
                         className="text-2xl font-extrabold text-gray-900 mb-3 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                         defaultValue={task.name}
                     />
@@ -41,6 +65,8 @@ function TaskView({ task, users, getTasks }) {
                     <textarea
                         className="text-base text-gray-700 mb-4 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                         rows="5"
+                        name="description"
+                        onChange={handleChange}
                         defaultValue={task.description}
                     ></textarea>
 
@@ -223,10 +249,12 @@ function TaskView({ task, users, getTasks }) {
                         <p className="text-sm font-semibold text-gray-600 mb-1">Status:</p>
                         <select
                             className="text-base text-gray-800 bg-white p-2 rounded-md shadow-sm w-full focus:ring-2 focus:ring-blue-500 border-0"
-                            value={task.status}
+                            name="status"
+                            onChange={handleSave}
+                            defaultValue={task.status}
                         >
                             <option value="pending">Pending</option>
-                            <option value="in_rogress">In Progress</option>
+                            <option value="in_progress">In Progress</option>
                             <option value="testing">Testing</option>
                             <option value="completed">Completed</option>
                         </select>
@@ -237,7 +265,9 @@ function TaskView({ task, users, getTasks }) {
                         <p className="text-sm font-semibold text-gray-600 mb-1">Priority:</p>
                         <select
                             className="text-base text-gray-800 bg-white p-2 rounded-md shadow-sm w-full focus:ring-2 focus:ring-blue-500 border-0"
-                            value={task.priority}
+                            name="priority"
+                            onChange={handleSave}
+                            defaultValue={task.priority}
                         >
                             <option value="low">Low</option>
                             <option value="medium">Medium</option>
@@ -251,6 +281,8 @@ function TaskView({ task, users, getTasks }) {
                         <input
                             type="date"
                             className="text-base text-gray-800 bg-white p-2 rounded-md shadow-sm w-full focus:ring-2 focus:ring-blue-500 border-0"
+                            name="due_date"
+                            onChange={handleSave}
                             defaultValue={task.due_date}
                         />
                     </div>
@@ -261,7 +293,9 @@ function TaskView({ task, users, getTasks }) {
                         <input
                             type="date"
                             className="text-base text-gray-800 bg-white p-2 rounded-md shadow-sm w-full focus:ring-2 focus:ring-blue-500 border-0"
-                            defaultValue={task.created_at}
+                            name="start_date"
+                            onChange={handleSave}
+                            defaultValue={task.start_date}
                         />
                     </div>
 
@@ -270,10 +304,12 @@ function TaskView({ task, users, getTasks }) {
                         <p className="text-sm font-semibold text-gray-600 mb-1">Assignee:</p>
                         <select
                             className="text-base text-gray-800 bg-white p-2 rounded-md shadow-sm w-full focus:ring-2 focus:ring-blue-500 border-0"
-                            value={task.assigned_user_id}
+                            name="assigned_user_id"
+                            onChange={handleSave}
+                            defaultValue={task.assigned_user_id}
                         >
                             {
-                                users.length && users.map((user, key) => (
+                                users.data.map((user, key) => (
                                     <option key={key} value={user.id}>{user.name}</option>
                                 ))
                             }
@@ -285,10 +321,12 @@ function TaskView({ task, users, getTasks }) {
                         <p className="text-sm font-semibold text-gray-600 mb-1">Tester:</p>
                         <select
                             className="text-base text-gray-800 bg-white p-2 rounded-md shadow-sm w-full focus:ring-2 focus:ring-blue-500 border-0"
-                            value={task.assigned_user_id}
+                            name="tester_user_id"
+                            onChange={handleSave}
+                            defaultValue={task.tester_user_id}
                         >
                             {
-                                users.length && users.map((user, key) => (
+                                users.data.map((user, key) => (
                                     <option key={key} value={user.id}>{user.name}</option>
                                 ))
                             }
@@ -300,10 +338,12 @@ function TaskView({ task, users, getTasks }) {
                         <p className="text-sm font-semibold text-gray-600 mb-1">Reviewer:</p>
                         <select
                             className="text-base text-gray-800 bg-white p-2 rounded-md shadow-sm w-full focus:ring-2 focus:ring-blue-500 border-0"
-                            value={task.assigned_user_id}
+                            name="reviewer_user_id"
+                            onChange={handleSave}
+                            defaultValue={task.reviewer_user_id}
                         >
                             {
-                                users.length && users.map((user, key) => (
+                                users.data.map((user, key) => (
                                     <option key={key} value={user.id}>{user.name}</option>
                                 ))
                             }
@@ -315,6 +355,7 @@ function TaskView({ task, users, getTasks }) {
                         <p className="text-sm font-semibold text-gray-600 mb-1">Tags:</p>
                         <div className="flex flex-wrap space-x-2 mb-1">
                             <input
+                                readOnly
                                 type="text"
                                 className="px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full focus:ring-2 focus:ring-blue-500"
                                 defaultValue="Frontend"
@@ -323,6 +364,7 @@ function TaskView({ task, users, getTasks }) {
                         </div>
                         <div className="flex flex-wrap space-x-2 mb-1">
                             <input
+                                readOnly
                                 type="text"
                                 className="px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full focus:ring-2 focus:ring-blue-500"
                                 defaultValue="Backend"
@@ -331,6 +373,7 @@ function TaskView({ task, users, getTasks }) {
                         </div>
                         <div className="flex flex-wrap space-x-2 mb-1">
                             <input
+                                readOnly
                                 type="text"
                                 className="px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full focus:ring-2 focus:ring-blue-500"
                                 defaultValue="Design"

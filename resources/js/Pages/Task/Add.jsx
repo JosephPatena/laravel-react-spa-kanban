@@ -1,4 +1,4 @@
-import { Inertia } from '@inertiajs/inertia';
+import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -28,21 +28,18 @@ function AddTaskModal({ projects, getTasks, handleOpenModal, users, status='pend
     };
 
     const handleAddTask = async () => {
-        try {
-            axios.post(route('task.store'), task)
-            .then(res => {
-                if (getTasks) {
-                    getTasks()
-                    handleOpenModal()
-                } else {
-                    Inertia.visit(route('task.show', res.task.id));
-                }
-            })
-            .catch(err => {
-                setNotifications(err.response.data.errors)
-            })
-        } catch (error) {
+        if (!getTasks) {
+            return router.post(route('task.store'), task)
         }
+
+        axios.post(route('task.store'), task)
+        .then(res => {
+            getTasks()
+            handleOpenModal()
+        })
+        .catch(err => {
+            setNotifications(err.response.data.errors)
+        })
     }
 
     return (

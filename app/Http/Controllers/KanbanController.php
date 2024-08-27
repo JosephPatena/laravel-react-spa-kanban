@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateTaskRequest;
-use App\Http\Requests\StoreTaskRequest;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\TaskResource;
 use App\Http\Resources\UserResource;
@@ -29,14 +27,16 @@ class KanbanController extends Controller
         ]);
     }
 
-    public function store(StoreTaskRequest $request)
+    public function update($id)
     {
-        
-    }
+        $task = Task::find($id);
+        $task->update([
+            request('column') => request('value')
+        ]);
 
-    public function update(UpdateTaskRequest $request, Task $task)
-    {
-        
+        return response()->json([
+            'task' => $task
+        ], 200);
     }
 
     public function updateStatus(Request $request)
@@ -48,10 +48,5 @@ class KanbanController extends Controller
         return response()->json([
             'message' => 'Successfully update!'
         ]);
-    }
-
-    public function destroy(Task $task)
-    {
-
     }
 }
