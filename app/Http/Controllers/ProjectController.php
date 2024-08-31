@@ -18,33 +18,44 @@ class ProjectController extends Controller
      */
     public function index()
     {
+        return inertia("Project/Index");
+    }
+
+    public function fetch()
+    {
         $query = Project::query();
 
         $sortField = request("sort_field", 'created_at');
         $sortDirection = request("sort_direction", "desc");
 
-        if (request("name")) {
-            $query->where("name", "like", "%" . request("name") . "%");
-        }
-        if (request("status")) {
-            $query->where("status", request("status"));
+        if (request("keyword")) {
+            $query->where("name", "like", "%" . request("keyword") . "%")
+                ->orWhere("description", "like", "%" . request("keyword") . "%");
         }
 
-        $projects = $query->orderBy($sortField, $sortDirection)
-            ->paginate(10)
-            ->onEachSide(1);
+        if (request('statuses') && !empty(request('statuses')[0])) {
+            $query->whereIn('status', request('statuses'));
+        }
 
-        return inertia("Project/Index", [
-            "projects" => ProjectResource::collection($projects),
-            'queryParams' => request()->query() ?: null,
-            'success' => session('success'),
-        ]);
+        if (request('from_project_page')) {
+            $projects = $query->orderBy($sortField, $sortDirection)
+                            ->paginate(request('show'))
+                            ->onEachSide(1);
+        }
+        else {
+            $projects = $query->latest()
+                            ->limit(request('show'))
+                            ->get()
+                            ->reverse();
+        }
+
+        return ProjectResource::collection($projects);
     }
 
-    public function fetch()
+    public function fetchSingleRecord($id)
     {
         return response()->json([
-            'projects' => ProjectResource::collection(Project::all())
+            'project' => ProjectResource::make(Project::find($id))
         ]);
     }
 
@@ -80,26 +91,8 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $query = $project->tasks();
-
-        $sortField = request("sort_field", 'created_at');
-        $sortDirection = request("sort_direction", "desc");
-
-        if (request("name")) {
-            $query->where("name", "like", "%" . request("name") . "%");
-        }
-        if (request("status")) {
-            $query->where("status", request("status"));
-        }
-
-        $tasks = $query->orderBy($sortField, $sortDirection)
-            ->paginate(10)
-            ->onEachSide(1);
         return inertia('Project/Show', [
-            'project' => new ProjectResource($project),
-            "tasks" => TaskResource::collection($tasks),
-            'queryParams' => request()->query() ?: null,
-            'success' => session('success'),
+            'project' => new ProjectResource($project)
         ]);
     }
 

@@ -62,9 +62,7 @@ class UserController extends Controller
 
     public function fetch()
     {
-        return response()->json([
-            'users' => UserResource::collection(User::all())
-        ]);
+        return UserResource::collection(User::all());
     }
 
     /**

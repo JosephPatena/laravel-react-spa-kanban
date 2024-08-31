@@ -1,45 +1,35 @@
 import { TASK_STATUS_CLASS_MAP, TASK_STATUS_TEXT_MAP } from "@/constants.jsx";
 import TableHeading from "@/Components/TableHeading";
-import { Link, router } from "@inertiajs/react";
+import { useState, useEffect } from 'react';
+import { Link } from "@inertiajs/react";
 
 export default function TasksTable({
   tasks,
   links,
-  success,
-  queryParams = null,
+  queries,
+  setQuery,
+  getTasks,
+  setActiveLink,
   hideProjectColumn = false,
-  setActiveLink
 }) {
-  queryParams = queryParams || {};
-  const searchFieldChanged = (name, value) => {
-    if (value) {
-      queryParams[name] = value;
-    } else {
-      delete queryParams[name];
-    }
-
-    router.get(route("task.index"), queryParams);
-  };
-
-  const onKeyPress = (name, e) => {
-    if (e.key !== "Enter") return;
-
-    searchFieldChanged(name, e.target.value);
-  };
+  const [success, setSuccesss] = useState(false);
 
   const sortChanged = (name) => {
-    if (name === queryParams.sort_field) {
-      if (queryParams.sort_direction === "asc") {
-        queryParams.sort_direction = "desc";
-      } else {
-        queryParams.sort_direction = "asc";
-      }
-    } else {
-      queryParams.sort_field = name;
-      queryParams.sort_direction = "asc";
-    }
-    router.get(route("task.index"), queryParams);
+    handleQuery({
+      sort_field: name,
+      sort_direction: (queries.sort_direction=='desc' ? 'asc' : 'desc')
+    })
   };
+
+  const handleQuery = (query) => {
+    setQuery((prev) => {
+        return { ...prev, ...query }
+    })
+  }
+
+  useEffect(() => {
+    getTasks();
+  }, [queries])
 
   return (
     <>
@@ -54,8 +44,6 @@ export default function TasksTable({
             <tr className="text-nowrap">
               <TableHeading
                 name="id"
-                sort_field={queryParams.sort_field}
-                sort_direction={queryParams.sort_direction}
                 sortChanged={sortChanged}
               >
                 ID
@@ -65,8 +53,6 @@ export default function TasksTable({
               )}
               <TableHeading
                 name="name"
-                sort_field={queryParams.sort_field}
-                sort_direction={queryParams.sort_direction}
                 sortChanged={sortChanged}
               >
                 Name
@@ -74,8 +60,6 @@ export default function TasksTable({
 
               <TableHeading
                 name="status"
-                sort_field={queryParams.sort_field}
-                sort_direction={queryParams.sort_direction}
                 sortChanged={sortChanged}
               >
                 Status
@@ -83,8 +67,6 @@ export default function TasksTable({
 
               <TableHeading
                 name="created_at"
-                sort_field={queryParams.sort_field}
-                sort_direction={queryParams.sort_direction}
                 sortChanged={sortChanged}
               >
                 Create Date
@@ -92,8 +74,6 @@ export default function TasksTable({
 
               <TableHeading
                 name="due_date"
-                sort_field={queryParams.sort_field}
-                sort_direction={queryParams.sort_direction}
                 sortChanged={sortChanged}
               >
                 Due Date

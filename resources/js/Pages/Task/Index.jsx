@@ -16,7 +16,9 @@ export default function Index({ auth, projects, users}) {
       assignees: [],
       reviewers: [],
       priorities: [],
-      from_task_page: true
+      from_task_page: true,
+      sort_direction: 'desc',
+      sort_field : 'created_at',
   });
 
   const getTasks = async () => {
@@ -68,8 +70,9 @@ export default function Index({ auth, projects, users}) {
               <TasksTable
                 tasks={tasks}
                 links={links}
-                success={null}
-                queryParams={[]}
+                queries={queries}
+                setQuery={setQuery}
+                getTasks={getTasks}
                 setActiveLink={setActiveLink}
               />
             </div>

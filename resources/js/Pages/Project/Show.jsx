@@ -2,8 +2,39 @@ import { PROJECT_STATUS_CLASS_MAP, PROJECT_STATUS_TEXT_MAP } from "@/constants.j
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import TasksTable from "@/Pages/Task/TasksTable";
 import { Head, Link } from "@inertiajs/react";
+import { useState, useEffect } from "react";
 
-export default function Show({ auth, success, project, tasks, queryParams }) {
+export default function Show({ auth, project }) {
+  const [activeLink, setActiveLink] = useState(route('task.fetch'));
+  const [tasks, setTasks] = useState([]);
+  const [links, setLinks] = useState([]);
+
+  const [queries, setQuery] = useState({
+      show: 25,
+      testers: [],
+      statuses: [],
+      assignees: [],
+      reviewers: [],
+      priorities: [],
+      from_task_page: true,
+      sort_direction: 'desc',
+      sort_field : 'created_at',
+  });
+
+  const getTasks = async () => {
+      await axios.post(activeLink, queries)
+      .then(res => {
+          setTasks(res.data.data)
+          setLinks(res.data.meta.links)
+      })
+      .catch(error => {
+      });
+  }
+
+  useEffect(() => {
+    getTasks();
+  }, [activeLink])
+
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -92,10 +123,13 @@ export default function Show({ auth, success, project, tasks, queryParams }) {
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
             <div className="p-6 text-gray-900 dark:text-gray-100">
               <TasksTable
-                tasks={tasks.data}
-                success={success}
-                queryParams={queryParams}
+                tasks={tasks}
+                links={links}
+                queries={queries}
+                setQuery={setQuery}
+                getTasks={getTasks}
                 hideProjectColumn={true}
+                setActiveLink={setActiveLink}
               />
             </div>
           </div>

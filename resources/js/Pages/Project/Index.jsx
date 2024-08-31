@@ -3,43 +3,50 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import TableHeading from "@/Components/TableHeading";
 import SelectInput from "@/Components/SelectInput";
-import Pagination from "@/Components/Pagination";
 import TextInput from "@/Components/TextInput";
 import Checkbox from "@/Components/Checkbox";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function Index({ auth, projects, queryParams = null, success }) {
-  queryParams = queryParams || {};
-  const searchFieldChanged = (name, value) => {
-    if (value) {
-      queryParams[name] = value;
-    } else {
-      delete queryParams[name];
-    }
+export default function Index({ auth }) {
+  const [activeLink, setActiveLink] = useState(route('project.fetch'));
+  const [success, setSuccesss] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [links, setLinks] = useState([]);
 
-    router.get(route("project.index"), queryParams);
-  };
-
-  const onKeyPress = (name, e) => {
-    if (e.key !== "Enter") return;
-
-    searchFieldChanged(name, e.target.value);
-  };
+  const [queries, setQuery] = useState({
+      show: 25,
+      statuses: [],
+      sort_direction: 'desc',
+      from_project_page: true,
+      sort_field : 'created_at',
+  });
 
   const sortChanged = (name) => {
-    if (name === queryParams.sort_field) {
-      if (queryParams.sort_direction === "asc") {
-        queryParams.sort_direction = "desc";
-      } else {
-        queryParams.sort_direction = "asc";
-      }
-    } else {
-      queryParams.sort_field = name;
-      queryParams.sort_direction = "asc";
-    }
-    router.get(route("project.index"), queryParams);
+    handleQuery({
+      sort_field: name,
+      sort_direction: (queries.sort_direction=='desc' ? 'asc' : 'desc')
+    })
   };
 
+  const handleQuery = (query) => {
+    setQuery((prev) => {
+        return { ...prev, ...query }
+    })
+  }
+
+  const getProjects = () => {
+    axios.post(activeLink, queries)
+    .then(res => {
+        setProjects(res.data.data)
+        setLinks(res.data.meta.links)
+    })
+    .catch(error => {
+    });
+  }
+
+  useEffect(() => {
+    getProjects();
+  }, [activeLink, queries])
 
   const [checkedItems, setCheckedItems] = useState(projects.data);
 
@@ -112,8 +119,6 @@ export default function Index({ auth, projects, queryParams = null, success }) {
                       <th className="px-3 py-3"></th>
                       <TableHeading
                         name="id"
-                        sort_field={queryParams.sort_field}
-                        sort_direction={queryParams.sort_direction}
                         sortChanged={sortChanged}
                       >
                         ID
@@ -121,8 +126,6 @@ export default function Index({ auth, projects, queryParams = null, success }) {
                       <th className="px-3 py-3">Image</th>
                       <TableHeading
                         name="name"
-                        sort_field={queryParams.sort_field}
-                        sort_direction={queryParams.sort_direction}
                         sortChanged={sortChanged}
                       >
                         Name
@@ -130,8 +133,6 @@ export default function Index({ auth, projects, queryParams = null, success }) {
 
                       <TableHeading
                         name="status"
-                        sort_field={queryParams.sort_field}
-                        sort_direction={queryParams.sort_direction}
                         sortChanged={sortChanged}
                       >
                         Status
@@ -139,8 +140,6 @@ export default function Index({ auth, projects, queryParams = null, success }) {
 
                       <TableHeading
                         name="created_at"
-                        sort_field={queryParams.sort_field}
-                        sort_direction={queryParams.sort_direction}
                         sortChanged={sortChanged}
                       >
                         Create Date
@@ -148,8 +147,6 @@ export default function Index({ auth, projects, queryParams = null, success }) {
 
                       <TableHeading
                         name="due_date"
-                        sort_field={queryParams.sort_field}
-                        sort_direction={queryParams.sort_direction}
                         sortChanged={sortChanged}
                       >
                         Due Date
@@ -167,20 +164,17 @@ export default function Index({ auth, projects, queryParams = null, success }) {
                       <th className="px-3 py-3">
                         <TextInput
                           className="w-full"
-                          defaultValue={queryParams.name}
                           placeholder="Project Name"
-                          onBlur={(e) =>
-                            searchFieldChanged("name", e.target.value)
+                          onChange={(e) =>
+                            handleQuery({keyword: e.target.value})
                           }
-                          onKeyPress={(e) => onKeyPress("name", e)}
                         />
                       </th>
                       <th className="px-3 py-3">
                         <SelectInput
                           className="w-full"
-                          defaultValue={queryParams.status}
                           onChange={(e) =>
-                            searchFieldChanged("status", e.target.value)
+                            handleQuery({statuses: [e.target.value]})
                           }
                         >
                           <option value="">Select Status</option>
@@ -195,13 +189,13 @@ export default function Index({ auth, projects, queryParams = null, success }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {projects.data.map((project, index) => (
+                    {projects.map((project, index) => (
                       <tr
                         className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                         key={project.id}
                       >
                         <td className="flex items-center justify-center text-center">
-                          <Checkbox className="mt-4" checked={checkedItems[index][project.id] || false} onChange={(e) => handleCheckboxChange(e, project.id)}></Checkbox>
+                          {/* <Checkbox className="mt-4" checked={checkedItems[index][project.id] || false} onChange={(e) => handleCheckboxChange(e, project.id)}></Checkbox> */}
                         </td>
                         <td className="px-3 py-2">{project.id}</td>
                         <td className="px-3 py-2">
@@ -234,7 +228,28 @@ export default function Index({ auth, projects, queryParams = null, success }) {
                   </tbody>
                 </table>
               </div>
-              <Pagination links={projects.meta.links} />
+              <nav className="text-center mt-4">
+              {
+                links &&
+                links.map((link) => (
+                  <button
+                    onClick={(e) => {
+                      setActiveLink(link.url)
+                    }}
+                    preserveScroll
+                    key={link.label}
+                    className={
+                      "inline-block py-2 px-3 rounded-lg text-dark-200 text-xs ml-1" +
+                      (link.active ? "bg-gray-950 " : " ") +
+                      (!link.url
+                        ? "!text-gray-500 cursor-not-allowed "
+                        : "hover:bg-gray-200")
+                    }
+                    dangerouslySetInnerHTML={{ __html: link.label }}
+                  ></button>
+                ))
+              }
+              </nav>
             </div>
           </div>
         </div>
