@@ -43,41 +43,58 @@ This project is a Kanban board application built with the following technologies
 
 Below are some screenshots of the Kanban board application:
 
-![Kanban Board](assets/kanban-board.png)
+Below are some screenshots of the Kanban board application:
+
 *Main Kanban board view, displaying tasks organized by columns.*
+![Kanban Board](assets/kanban-board.png)
 
-![Advanced Search](assets/advanced-search.png)
+
 *Advanced search feature for filtering tasks and projects based on various criteria.*
+![Advanced Search](assets/advanced-search.png)
 
-![View Task in Kanban](assets/view-task-kanban.png)
+
 *Detailed view of a task within the Kanban board, showing task details and comments.*
+![View Task in Kanban](assets/view-task-kanban.png)
 
-![Add New Task in Kanban](assets/add-new-task-kanban.png)
+
 *Interface for adding a new task directly within the Kanban board view.*
+![Add New Task in Kanban](assets/add-new-task-kanban.png)
 
-![Projects Index](assets/projects-index.png)
+
 *List of all projects, providing an overview and quick access to individual projects.*
+![Projects Index](assets/projects-index.png)
 
-![View Project](assets/view-project.png)
+
+*Form for creating a new project with relevant details.*
+![Add New Project Form](assets/add-project.png)
+
+
 *Detailed view of a single project, including tasks and project-specific information.*
+![View Project](assets/view-project.png)
 
-![Edit Project](assets/edit-project.png)
+
 *Interface for editing project details, such as name, description, and settings.*
+![Edit Project](assets/edit-project.png)
 
-![Task Index](assets/task-index.png)
+
 *List of all tasks, including options to filter and manage tasks.*
+![Task Index](assets/task-index.png)
 
-![View Task](assets/view-task.png)
+
 *Detailed view of a task, including full description, due dates, and assigned users.*
+![View Task](assets/view-task.png)
 
-![Add New Task Form](assets/add-new-task.png)
+
 *Form for creating a new task with relevant details.*
+![Add New Task Form](assets/add-new-task.png)
 
-![Dashboard](assets/dashboard.png)
+
 *Overview of the main dashboard, showing a summary of projects and tasks.*
+![Dashboard](assets/dashboard.png)
 
-![User Management](assets/users-index.png)
+
 *User management interface, displaying all users and their roles.*
+![User Management](assets/users-index.png)
 
 ## Installation
 
