@@ -19,6 +19,7 @@ export default function Show({ auth, project }) {
       from_task_page: true,
       sort_direction: 'desc',
       sort_field : 'created_at',
+      project_ids: [project.id],
   });
 
   const getTasks = async () => {
@@ -90,7 +91,7 @@ export default function Show({ auth, project }) {
                   </div>
                   <div className="mt-4">
                     <label className="font-bold text-lg">Created By</label>
-                    <p className="mt-1">{project.createdBy.name}</p>
+                    <p className="mt-1">{project.createdBy ? project.createdBy.name : ""}</p>
                   </div>
                 </div>
                 <div>
@@ -104,7 +105,7 @@ export default function Show({ auth, project }) {
                   </div>
                   <div className="mt-4">
                     <label className="font-bold text-lg">Updated By</label>
-                    <p className="mt-1">{project.updatedBy.name}</p>
+                    <p className="mt-1">{project.updatedBy ? project.updatedBy.name : ""}</p>
                   </div>
                 </div>
               </div>

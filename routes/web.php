@@ -11,16 +11,18 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::redirect('/', '/dashboard');
-Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-Route::resource('project', ProjectController::class);
-Route::post('projects-fetch', [ProjectController::class, 'fetch'])->name('project.fetch');
-Route::post('project-destroy-all', [ProjectController::class, 'destroyAll'])->name('project.destroy_all');
-Route::resource('user', UserController::class);
-Route::post('users-fetch', [UserController::class, 'fetch'])->name('user.fetch');
-Route::resource('task', TaskController::class);
-Route::post('tasks-fetch', [TaskController::class, 'fetch'])->name('task.fetch');
 Route::resource('kanban', KanbanController::class);
-Route::post('update-status', [KanbanController::class, 'updateStatus'])->name('kanban.status-update');
+Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::resource('user', UserController::class);
+Route::post('user/fetch-all', [UserController::class, 'fetch'])->name('user.fetch');
+
+Route::resource('project', ProjectController::class);
+Route::post('project/fetch-all', [ProjectController::class, 'fetch'])->name('project.fetch');
+Route::post('project-destroy-all', [ProjectController::class, 'destroyAll'])->name('project.destroy_all');
+
+Route::resource('task', TaskController::class);
+Route::post('task/fetch-all', [TaskController::class, 'fetch'])->name('task.fetch');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');

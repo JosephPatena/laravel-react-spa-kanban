@@ -30,6 +30,20 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('123.321A'),
             'email_verified_at' => time()
         ]);
+        User::factory()->create([
+            'id' => 3,
+            'name' => 'Jampong',
+            'email' => 'jampong@example.com',
+            'password' => bcrypt('123.321A'),
+            'email_verified_at' => time()
+        ]);
+        User::factory()->create([
+            'id' => 4,
+            'name' => 'Pogs',
+            'email' => 'pogsthesiamese@example.com',
+            'password' => bcrypt('123.321A'),
+            'email_verified_at' => time()
+        ]);
 
         Project::factory()
             ->count(30)

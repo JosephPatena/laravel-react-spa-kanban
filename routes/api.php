@@ -21,14 +21,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->group(function () {
 });
 
-Route::post('projects-fetch', [ProjectController::class, 'fetch']);
-Route::get('project-fetch/{id}', [ProjectController::class, 'fetchSingleRecord']);
-Route::post('project-update/{id}', [ProjectController::class, 'update']);
-Route::post('project-save', [ProjectController::class, 'store']);
-Route::post('tasks-fetch', [TaskController::class, 'fetch']);
-Route::get('task-fetch/{id}', [KanbanController::class, 'show']);
-Route::post('users-fetch', [UserController::class, 'fetch']);
-Route::post('update-status', [KanbanController::class,'updateStatus']);
-Route::post('task-store', [TaskController::class, 'store']);
-Route::post('task-update/{id}', [KanbanController::class, 'update']);
-Route::get('fetch-figures', [DashboardController::class, 'fetchFigures']);
+Route::post('project/fetch-all', [ProjectController::class, 'fetch']);
+Route::get('project/fetch/{id}', [ProjectController::class, 'fetchSingleRecord']);
+Route::post('project/save', [ProjectController::class, 'store']);
+Route::post('project/update/{id}', [ProjectController::class, 'update']);
+
+Route::post('task/fetch-all', [TaskController::class, 'fetch']);
+Route::get('task/fetch/{id}', [KanbanController::class, 'show']);
+Route::post('task/save', [TaskController::class, 'store']);
+Route::post('task/update/{id}', [KanbanController::class, 'update']);
+Route::get('task/fetch-figures', [DashboardController::class, 'fetchFigures']);
+
+Route::post('user/fetch-all', [UserController::class, 'fetch']);
+Route::get('user/fetch/{id}', [UserController::class, 'view']);
+Route::post('user/register', [UserController::class, 'store']);
+Route::post('user/update/{id}', [UserController::class, 'update']);

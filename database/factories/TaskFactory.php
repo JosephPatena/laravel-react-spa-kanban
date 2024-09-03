@@ -34,6 +34,8 @@ class TaskFactory extends Factory
         if(in_array($status, ['in_progress', 'testing', 'completed'])) {
             $start_date = fake()->dateTimeBetween('-3 months', '-2 months');
         }
+
+        $assigned_user_id = fake()->randomElement([1, 2, 3, 4]);
         
         return [
             'name' => fake()->sentence(),
@@ -44,11 +46,11 @@ class TaskFactory extends Factory
             'status' => $status,
             'priority' => fake()
                 ->randomElement(['low', 'medium', 'high']),
-            'assigned_user_id' => fake()->randomElement([1, 2]),
+            'assigned_user_id' => $assigned_user_id,
             'tester_user_id' => $tester_user_id,
             'reviewer_user_id' => $reviewer_user_id,
-            'created_by' => 1,
-            'updated_by' => 1,
+            'created_by' => $assigned_user_id,
+            'updated_by' => $assigned_user_id,
             'created_at' => time(),
             'updated_at' => time(),
         ];

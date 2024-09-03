@@ -16,7 +16,7 @@ function TasksContainer({ tasks, status, priority, handleOpenModal, handleOpenTa
 
     const updateStatus = async (item) => {
         if (item.status !== status || item.priority !== priority) {
-            axios.post(route('kanban.status-update'), { id: item.id, status: status, priority: priority })
+            axios.put(route('kanban.update', item.id), { status: status, priority: priority })
             .then(res => {
                 getTasks()
             })

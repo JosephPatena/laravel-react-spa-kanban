@@ -28,7 +28,6 @@ class ProjectResource extends JsonResource
                 Storage::url($this->image_path) : $this->image_path,
             'createdBy' => new UserResource($this->createdBy),
             'updatedBy' => new UserResource($this->updatedBy),
-            $this->id => false,
         ];
     }
 }

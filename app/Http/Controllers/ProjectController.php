@@ -73,17 +73,15 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request)
     {
         $data = $request->validated();
-        /** @var $image \Illuminate\Http\UploadedFile */
-        $image = $data['image'] ?? null;
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
-        if ($image) {
-            $data['image_path'] = $image->store('project/' . Str::random(), 'public');
-        }
-        Project::create($data);
+        $project = Project::create($data);
 
-        return to_route('project.index')
-            ->with('success', 'Project was created');
+        if (request('redirect_not')) {
+            return response()->json($project);
+        }
+
+        return to_route('project.show', $project->id);
     }
 
     /**
@@ -109,21 +107,15 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProjectRequest $request, Project $project)
+    public function update(UpdateProjectRequest $project)
     {
-        $data = $request->validated();
-        $image = $data['image'] ?? null;
-        $data['updated_by'] = Auth::id();
-        if ($image) {
-            if ($project->image_path) {
-                Storage::disk('public')->deleteDirectory(dirname($project->image_path));
-            }
-            $data['image_path'] = $image->store('project/' . Str::random(), 'public');
-        }
-        $project->update($data);
+        Project::find($project->id)->update($project->toArray());
 
-        return to_route('project.index')
-            ->with('success', "Project \"$project->name\" was updated");
+        if (request('redirect_not')) {
+            return response()->json($project);
+        }
+
+        return to_route('project.show', $project->id);
     }
 
     /**

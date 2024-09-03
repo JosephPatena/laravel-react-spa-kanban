@@ -15,27 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $query = User::query();
-
-        $sortField = request("sort_field", 'created_at');
-        $sortDirection = request("sort_direction", "desc");
-
-        if (request("name")) {
-            $query->where("name", "like", "%" . request("name") . "%");
-        }
-        if (request("email")) {
-            $query->where("email", "like", "%" . request("email") . "%");
-        }
-
-        $users = $query->orderBy($sortField, $sortDirection)
-            ->paginate(10)
-            ->onEachSide(1);
-
-        return inertia("User/Index", [
-            "users" => UserCrudResource::collection($users),
-            'queryParams' => request()->query() ?: null,
-            'success' => session('success'),
-        ]);
+        return inertia("User/Index");
     }
 
     /**
@@ -54,51 +34,76 @@ class UserController extends Controller
         $data = $request->validated();
         $data['email_verified_at'] = time();
         $data['password'] = bcrypt($data['password']);
-        User::create($data);
+        $user = User::create($data);
 
-        return to_route('user.index')
-            ->with('success', 'User was created');
+        if (request('redirect_not')) {
+            return response()->json($user);
+        }
+
+        return to_route('user.show', $request->id);
     }
 
     public function fetch()
     {
-        return UserResource::collection(User::all());
+        $query = User::query();
+
+        $sortField = request("sort_field", 'created_at');
+        $sortDirection = request("sort_direction", "desc");
+
+        if (request("keyword")) {
+            $query->where("name", "like", "%" . request("keyword") . "%")
+                ->orWhere("email", "like", "%" . request("keyword") . "%");
+        }
+
+        $users = $query->orderBy($sortField, $sortDirection)
+            ->paginate(10)
+            ->onEachSide(1);
+
+        return UserResource::collection($users);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show($id)
     {
-        //
+        return inertia("User/Show", [
+            'userData' => new UserResource(User::find($id))
+        ]);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function view($id)
+    {
+        return response()->json([
+            'user' => new UserResource(User::find($id))
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit($id)
     {
         return inertia('User/Edit', [
-            'user' => new UserCrudResource($user),
+            'userData' => new UserResource(User::find($id)),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $user)
     {
-        $data = $request->validated();
-        $password = $data['password'] ?? null;
-        if ($password) {
-            $data['password'] = bcrypt($password);
-        } else {
-            unset($data['password']);
-        }
-        $user->update($data);
+        User::find($user->id)->update($user->toArray());
 
-        return to_route('user.index')
-            ->with('success', "User \"$user->name\" was updated");
+        if (request('redirect_not')) {
+            return response()->json($user);
+        }
+
+        return to_route('user.show', $user->id);
     }
 
     /**

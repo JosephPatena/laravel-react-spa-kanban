@@ -30,23 +30,22 @@ class KanbanController extends Controller
     public function update($id)
     {
         $task = Task::find($id);
-        $task->update([
-            request('column') => request('value')
-        ]);
+
+        if (request('column') && request('value')) {
+            $task->update([
+                request('column') => request('value')
+            ]);
+        }
+
+        if (request('priority') && request('status')) {
+            $task->update([
+                'priority' => request('priority'),
+                'status' => request('status'),
+            ]);
+        }
 
         return response()->json([
             'task' => $task
         ], 200);
-    }
-
-    public function updateStatus(Request $request)
-    {
-        $task = Task::find($request->id);
-        $task->priority = $request->priority;
-        $task->status = $request->status;
-        $task->save();
-        return response()->json([
-            'message' => 'Successfully update!'
-        ]);
     }
 }
